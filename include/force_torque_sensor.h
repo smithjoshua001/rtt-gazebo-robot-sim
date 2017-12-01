@@ -40,7 +40,7 @@ public:
      * @param model
      */
     force_torque_sensor(const std::string& joint_srdf, gazebo::physics::ModelPtr gazebo_model,
-                        boost::shared_ptr<urdf::ModelInterface const> urdf_model,
+                        std::shared_ptr<urdf::ModelInterface const> urdf_model,
                         gazebo::sensors::Sensor_V sensors,
                         RTT::DataFlowInterface& ports);
 
@@ -61,7 +61,7 @@ private:
 
     bool _inited;
 
-    boost::shared_ptr<wrench> _wrench_measured;
+    std::shared_ptr<wrench> _wrench_measured;
     RTT::DataFlowInterface& _ports;
 
     /**
@@ -73,7 +73,7 @@ private:
     bool pairFrameToSensor(const std::string& joint_srdf,
                            const gazebo::sensors::SensorPtr sensor,
                            gazebo::physics::ModelPtr gazebo_model,
-                           boost::shared_ptr<urdf::ModelInterface const> urdf_model);
+                           std::shared_ptr<urdf::ModelInterface const> urdf_model);
 
     void setFeedback();
 

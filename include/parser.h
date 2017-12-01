@@ -2,7 +2,7 @@
 #define __PARSER_H__
 
 #include <control_modes.h>
-#include <tinyxml.h>
+#include <tinyxml2.h>
 #include <srdfdom_advr/model.h>
 #include <urdf/model.h>
 #include <algorithm>
@@ -62,9 +62,9 @@ struct gains{
     {
         if(map_controllers.find(kc) == map_controllers.end())
             return false;
-        
+
         std::vector<std::string> available_controllers = map_controllers.at(kc);
-        if(std::find(available_controllers.begin(), available_controllers.end(), 
+        if(std::find(available_controllers.begin(), available_controllers.end(),
                      std::string(ControlModes::JointPositionCtrl)) != available_controllers.end())
         {
             PIDGains pids= map_PIDGains.at(kc);
@@ -77,8 +77,8 @@ struct gains{
                 }
             }
             return false;
-        } 
-        else 
+        }
+        else
             return false;
     }
 
@@ -117,7 +117,7 @@ public:
 
     gains Gains;
 private:
-    boost::shared_ptr<TiXmlDocument> _doc;
+    std::shared_ptr<tinyxml2::XMLDocument> _doc;
 
 
 

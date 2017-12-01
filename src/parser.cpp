@@ -9,14 +9,14 @@ gain_parser::gain_parser()
 
 bool gain_parser::initFile(const std::string &filename)
 {
-    _doc.reset(new TiXmlDocument(filename));
+    _doc.reset(new tinyxml2::XMLDocument());
 
-    if(!_doc->LoadFile())
+    if(!_doc->LoadFile(filename.c_str()))
         return false;
 
-    TiXmlHandle hDoc(_doc.get());
-    TiXmlElement *pRoot, *pParm;
-    TiXmlElement *ppParam, *pppParam;
+    tinyxml2::XMLHandle hDoc(_doc.get());
+    tinyxml2::XMLElement *pRoot, *pParm;
+    tinyxml2::XMLElement *ppParam, *pppParam;
     pRoot = _doc->FirstChildElement(cogimon::parsed_words::robot_tag);
 
     if(!pRoot)
@@ -139,4 +139,3 @@ void gain_parser::printGains()
                     <<" damping: "<<impedances[i].damping<<std::endl;
     }
 }
-

@@ -1,6 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(rtt-gazebo-robot-sim)
 
+function(ExtractLibraries outputVar libraryHints)
+  message(STATUS "EXTRACTING: ${ARGN}")
+	foreach(LIB ${ARGN})
+		message(STATUS "LIB: ${LIB}")
+		find_library(TMP ${LIB} HINTS ${libraryHints})
+		set( ${outputVar} ${${outputVar}} ${TMP})
+		unset(TMP CACHE)
+	endforeach(LIB)
+  set(${outputVar} ${${outputVar}} PARENT_SCOPE)
+endfunction()
+
 set(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -21,7 +32,7 @@ include(${OROCOS-RTT_USE_FILE_PATH}/UseOROCOS-RTT.cmake )
 
 set (Eigen_INCLUDE_DIRS "/usr/include/eigen3")
 find_package(orocos_kdl REQUIRED)
-find_package(Boost COMPONENTS thread REQUIRED)
+#find_package(Boost COMPONENTS thread REQUIRED)
 find_package(srdfdom_advr REQUIRED)
 find_package(XBotCoreModel REQUIRED)
 
@@ -32,21 +43,21 @@ add_definitions(${RST-RT_CFLAGS})
 link_directories(${RST-RT_LIBRARY_DIR} ${RST-RT_LIBRARY_DIRS})
 
 find_package(PkgConfig REQUIRED)
-pkg_search_module(TINYXML REQUIRED tinyxml)
-if(NOT TINYXML_INCLUDE_DIR)
-        find_path("/usr/include" tinyxml.h)
-        find_library(TINYXML_LIBRARY NAMES tinyxml)
-        set(TINYXML_LIBRARIES ${TINYXML_LIBRARY})
-    set(TINYXML_INCLUDE_DIRS ${TINYXML_INCLUDE_DIR})
-    set(TINYXML_LIBRARY_DIR "/usr/lib/x86_64-linux-gnu")
-endif()
-message(STATUS "TINYXML_VERSION: ${TINYXML_VERSION}")
-include_directories(BEFORE SYSTEM ${TINYXML_INCLUDE_DIRS})
-link_directories(${TINYXML_LIBRARY_DIR})
+pkg_search_module(TINYXML2 REQUIRED tinyxml2>=5.0.0)
+
+
+ExtractLibraries(TINYXML_LIBRARIES ${TINYXML2_LIBRARY_DIRS} ${TINYXML2_LIBRARIES})
+message(STATUS "TINYXML2 LIBS: ${TINYXML2_LIBRARIES}")
+
+
+
+message(STATUS "TINYXML_VERSION: ${TINYXML2_VERSION}")
+include_directories(BEFORE SYSTEM ${TINYXML2_INCLUDE_DIRS})
+link_directories(${TINYXML2_LIBRARY_DIRS})
 message(STATUS "TINYXML_LIBRARIES: ${TINYXML_LIBRARIES}")
-message(STATUS "TINYXML_LIBRARY_DIR: ${TINYXML_LIBRARY_DIR}")
-message(STATUS "TINYXML_INCLUDE_DIR: ${TINYXML_INCLUDE_DIRS}")
-message(STATUS "TINYXML_LIBRARY: ${TINYXML_LIBRARY}")
+message(STATUS "TINYXML_LIBRARY_DIR: ${TINYXML2_LIBRARY_DIR}")
+message(STATUS "TINYXML_INCLUDE_DIR: ${TINYXML2_INCLUDE_DIRS}")
+message(STATUS "TINYXML_LIBRARY: ${TINYXML2_LIBRARY}")
 
 include_directories(
     include
@@ -56,7 +67,7 @@ include_directories(
     ${USE_OROCOS_INCLUDE_DIRS}
     ${GAZEBO_INCLUDE_DIRS}
     ${RST-RT_INCLUDE_DIRS}
-    ${TINYXML_INCLUDE_DIRS}
+    ${TINYXML2_INCLUDE_DIRS}
     ${srdfdom_advr_INCLUDE_DIRS}
     ${XBotCoreModel_INCLUDE_DIRS}
 )

@@ -50,11 +50,11 @@ public:
     bool setInitialJointConfiguration(const std::vector<double>& home);
 
 
-    boost::shared_ptr<position_ctrl> position_controller;
-    boost::shared_ptr<impedance_ctrl> impedance_controller;
-    boost::shared_ptr<torque_ctrl> torque_controller;
+    std::shared_ptr<position_ctrl> position_controller;
+    std::shared_ptr<impedance_ctrl> impedance_controller;
+    std::shared_ptr<torque_ctrl> torque_controller;
 
-    boost::shared_ptr<full_fbk> full_feedback;
+    std::shared_ptr<full_fbk> full_feedback;
 
 private:
     std::string _kinematic_chain_name;
@@ -79,7 +79,7 @@ private:
     void setInitialPosition(const bool use_actual_model_pose = true);
     void setInitialImpedance();
 
-    boost::shared_ptr<cogimon::gains> _gains;
+    std::shared_ptr<cogimon::gains> _gains;
 
 };
 

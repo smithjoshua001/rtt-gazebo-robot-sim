@@ -4,7 +4,7 @@
 
 force_torque_sensor::force_torque_sensor(const std::string& joint_srdf,
                                          gazebo::physics::ModelPtr gazebo_model,
-                                         boost::shared_ptr<urdf::ModelInterface const> urdf_model,
+                                         std::shared_ptr<urdf::ModelInterface const> urdf_model,
                                          gazebo::sensors::Sensor_V sensors,
                                          RTT::DataFlowInterface& ports):
     _force_torque_frame(""),
@@ -18,7 +18,7 @@ force_torque_sensor::force_torque_sensor(const std::string& joint_srdf,
     {
         if(sensors[i]->Type().compare("force_torque") == 0){
             if(pairFrameToSensor(joint_srdf, sensors[i], gazebo_model, urdf_model))
-                _sensor = std::static_pointer_cast<gazebo::sensors::ForceTorqueSensor>(sensors[i]); 
+                _sensor = std::static_pointer_cast<gazebo::sensors::ForceTorqueSensor>(sensors[i]);
         }
 
         if(_sensor != NULL)
@@ -61,14 +61,14 @@ void force_torque_sensor::setFeedback()
 bool force_torque_sensor::pairFrameToSensor(const std::string& joint_srdf,
                                             const gazebo::sensors::SensorPtr sensor,
                                             gazebo::physics::ModelPtr gazebo_model,
-                                            boost::shared_ptr<urdf::ModelInterface const> urdf_model)
+                                            std::shared_ptr<urdf::ModelInterface const> urdf_model)
 {
     std::string sensor_joint_name = sensor->ParentName();
 
     ///Here we do 2 checks:
     /// 1. We check if joint_srdf and the sensor_joint_name are both parent joints of the same link
     std::string sensor_link_name = gazebo_model->GetJoint(sensor_joint_name)->GetChild()->GetName();
-    boost::shared_ptr<const urdf::Joint> urdf_joint = urdf_model->getJoint(joint_srdf);
+    std::shared_ptr<const urdf::Joint> urdf_joint = urdf_model->getJoint(joint_srdf);
     std::string srdf_link_name = urdf_joint->child_link_name;
     if(sensor_link_name.compare(srdf_link_name) == 0){
         RTT::log(RTT::Info)<<"Sensor "<<sensor->Name()<<" of type "<<sensor->GetType()<<

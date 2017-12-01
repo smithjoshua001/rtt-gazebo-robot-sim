@@ -55,9 +55,9 @@ robotSim::robotSim(const std::string &name):
                 this, RTT::ClientThread);
 
     world_begin = gazebo::event::Events::ConnectWorldUpdateBegin(
-            boost::bind(&robotSim::WorldUpdateBegin, this));
+            std::bind(&robotSim::WorldUpdateBegin, this));
     world_end = gazebo::event::Events::ConnectWorldUpdateEnd(
-            boost::bind(&robotSim::WorldUpdateEnd, this));
+            std::bind(&robotSim::WorldUpdateEnd, this));
 
 
 }
@@ -66,7 +66,7 @@ bool robotSim::resetModelConfiguration()
 {
     RTT::log(RTT::Info)<<"Reset Model Configuration has been called!"<<RTT::endlog();
     bool reset = true;
-    std::map<std::string, boost::shared_ptr<KinematicChain>>::iterator it;
+    std::map<std::string, std::shared_ptr<KinematicChain>>::iterator it;
     for(it = kinematic_chains.begin(); it != kinematic_chains.end(); it++)
         reset = reset && it->second->resetKinematicChain();
     return reset;
@@ -119,7 +119,7 @@ std::vector<std::string> robotSim::getControlAvailableMode(const std::string& ki
 std::vector<std::string> robotSim::getKinematiChains()
 {
     std::vector<std::string> chains;
-    for(std::map<std::string, boost::shared_ptr<KinematicChain>>::iterator it = kinematic_chains.begin();
+    for(std::map<std::string, std::shared_ptr<KinematicChain>>::iterator it = kinematic_chains.begin();
         it != kinematic_chains.end(); it++)
         chains.push_back(it->second->getKinematicChainName());
     return chains;
@@ -188,14 +188,14 @@ bool robotSim::gazeboConfigureHook(gazebo::physics::ModelPtr model) {
         std::vector<std::string> enabled_joints_in_chain;
         _xbotcore_model.get_enabled_joints_in_chain(chain_name,enabled_joints_in_chain);
 
-        kinematic_chains.insert(std::pair<std::string, boost::shared_ptr<KinematicChain>>(
-            chain_name, boost::shared_ptr<KinematicChain>(
+        kinematic_chains.insert(std::pair<std::string, std::shared_ptr<KinematicChain>>(
+            chain_name, std::shared_ptr<KinematicChain>(
                 new KinematicChain(chain_name, enabled_joints_in_chain, *(this->ports()), model))));
     }
 
     RTT::log(RTT::Info) << "Kinematic Chains map created!" << RTT::endlog();
 
-    for(std::map<std::string, boost::shared_ptr<KinematicChain>>::iterator it = kinematic_chains.begin();
+    for(std::map<std::string, std::shared_ptr<KinematicChain>>::iterator it = kinematic_chains.begin();
         it != kinematic_chains.end(); it++){
         if(!(it->second->initKinematicChain(gains.Gains))){
             RTT::log(RTT::Warning) << "Problem Init Kinematic Chain" <<
