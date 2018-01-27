@@ -65,6 +65,7 @@ include_directories(
     ${Eigen_INCLUDE_DIRS}
     ${orocos_kdl_INCLUDE_DIRS}
     ${USE_OROCOS_INCLUDE_DIRS}
+    ${OROCOS-RTT_INCLUDE_DIRS}
     ${GAZEBO_INCLUDE_DIRS}
     ${RST-RT_INCLUDE_DIRS}
     ${TINYXML2_INCLUDE_DIRS}
