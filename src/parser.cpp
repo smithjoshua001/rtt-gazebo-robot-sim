@@ -10,10 +10,10 @@ gain_parser::gain_parser()
 bool gain_parser::initFile(const std::string &filename)
 {
     _doc.reset(new tinyxml2::XMLDocument());
-
-    if(!_doc->LoadFile(filename.c_str()))
+    if(!(tinyxml2::XMLError::XML_SUCCESS ==_doc->LoadFile(filename.c_str()))){
+        std::cout<<_doc->ErrorStr()<<std::endl;
         return false;
-
+    }
     tinyxml2::XMLHandle hDoc(_doc.get());
     tinyxml2::XMLElement *pRoot, *pParm;
     tinyxml2::XMLElement *ppParam, *pppParam;
@@ -21,7 +21,6 @@ bool gain_parser::initFile(const std::string &filename)
 
     if(!pRoot)
         return false;
-
     pParm = pRoot->FirstChildElement(cogimon::parsed_words::rtt_gazebo_tag);
     while(pParm)
     {
@@ -30,13 +29,11 @@ bool gain_parser::initFile(const std::string &filename)
          std::vector<std::string> controllers;
          cogimon::gains::PIDGains pids;
          cogimon::gains::ImpedanceGains impedances;
-
          ppParam = pParm->FirstChildElement(cogimon::parsed_words::controller_tag);
          while(ppParam)
          {
             std::string controller_type = ppParam->Attribute(cogimon::parsed_words::type_attribute);
             controllers.push_back(controller_type);
-
             pppParam = ppParam->FirstChildElement(cogimon::parsed_words::gains_tag);
             while(pppParam)
             {
@@ -73,12 +70,10 @@ bool gain_parser::initFile(const std::string &filename)
                 pppParam = pppParam->NextSiblingElement(cogimon::parsed_words::gains_tag);
             }
 
-
             if(controller_type.compare(ControlModes::JointPositionCtrl) == 0)
                 Gains.map_PIDGains[kin_chain_name] = pids;
             else if(controller_type.compare(ControlModes::JointImpedanceCtrl) == 0)
                 Gains.map_ImpedanceGains[kin_chain_name] = impedances;
-
 
             ppParam = ppParam->NextSiblingElement(cogimon::parsed_words::controller_tag);
          }
@@ -90,10 +85,8 @@ bool gain_parser::initFile(const std::string &filename)
 
 
 
-
          pParm = pParm->NextSiblingElement(cogimon::parsed_words::rtt_gazebo_tag);
     }
-
     return true;
 }
 

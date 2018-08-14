@@ -35,6 +35,10 @@ find_package(orocos_kdl REQUIRED)
 #find_package(Boost COMPONENTS thread REQUIRED)
 find_package(srdfdom_advr REQUIRED)
 find_package(XBotCoreModel REQUIRED)
+link_directories(${XBotCoreModel_LIBRARY_DIRS})
+message(STATUS "XBotCoreModel_LIBRARY_DIRS: ${XBotCoreModel_LIBRARY_DIRS}")
+find_library(TMP_XBOT NAMES ${XBotCoreModel_LIBRARIES} HINTS ${XBotCoreModel_LIBRARY_DIRS})
+message(STATUS "XBotCoreModel_LIBRARIES: ${TMP_XBOT}")
 
 find_package(RST-RT REQUIRED)
 message(STATUS "RST-RT version: ${RST-RT_VERSION}")
@@ -93,7 +97,7 @@ target_link_libraries(${PROJECT_NAME}
    ${RST-RT_LIBRARIES}
    ${TINYXML_LIBRARIES}
    ${srdfdom_advr_LIBRARIES}
-   ${XBotCoreModel_LIBRARIES}
+   ${TMP_XBOT}
 )
 
 install (TARGETS gain_parser
